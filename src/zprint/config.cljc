@@ -9,7 +9,6 @@
     [zprint.rewrite :refer [sort-dependencies]]
     [zprint.guide   :refer [jrequireguide defprotocolguide signatureguide1
                             odrguide guideguide rodguide areguide]]
-    [sci.core       :as sci]
     #?(:clj [clojure.edn :refer [read-string]]
        :cljs [cljs.reader :refer [read-string]]))
   #?@(:clj [(:import (java.io InputStreamReader FileReader BufferedReader)
@@ -1523,7 +1522,7 @@
   from eval-string are not caught and propagate back up the call
   stack."
   [s]
-  #?(:clj (sci/eval-string s #_opts)
+  #?(:clj (clojure.edn/read-string s)
      :cljs nil))
 
 ;; Remove two files from this, make it one file at a time.`
@@ -1607,7 +1606,7 @@
   "Read in an options map from a string."
   [map-string]
   (when map-string
-    (try (let [opts-map (sci/eval-string map-string)] [opts-map nil])
+    (try (let [opts-map (clojure.edn/read-string map-string)] [opts-map nil])
          (catch #?(:clj Exception
                    :cljs :default)
            e

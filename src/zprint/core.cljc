@@ -29,7 +29,6 @@
     [zprint.focus       :refer [range-ssv]]
     [zprint.range       :refer [expand-range-to-top-level split-out-range
                                 reassemble-range]]
-    [sci.core           :as sci]
     [rewrite-clj.parser :as p]
     #_[clojure.spec.alpha :as s])
   #?@(:clj ((:import (java.net URL URLConnection)
@@ -181,8 +180,7 @@
                               url-as-filename))
              cache-item (if (and (.exists cache) (not (zero? (.length cache))))
                           (try (-> (slurp cache)
-                                   (sci/eval-string)
-                                   #_(clojure.edn/read-string))
+                                   (clojure.edn/read-string))
                                (catch Exception e (.delete cache) nil)))
              active-cache? (and cache-item
                                 (> (:expires cache-item)
@@ -205,8 +203,7 @@
                                                 (.setConnectTimeout 1000)
                                                 (.connect))
                    remote-opts (some-> (slurp (.getInputStream remote-conn))
-                                       (sci/eval-string)
-                                       #_(clojure.edn/read-string))]
+                                       (clojure.edn/read-string))]
                (if remote-opts
                  (do
                    ;2> no valid cache, remote used, async best-effort cache
@@ -967,7 +964,7 @@
   (let [s-onesemi (clojure.string/replace s #"^;+" ";")
         comment-split (clojure.string/split s-onesemi #"^;!zprint ")]
     (when-let [possible-options (second comment-split)]
-      (try [(sci/eval-string possible-options) nil]
+      (try [(clojure.edn/read-string possible-options) nil]
            (catch #?(:clj Exception
                      :cljs :default)
              e
